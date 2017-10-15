@@ -35,13 +35,6 @@ public class restaurantArray {
 	
 	static void printTable(int totalPrice){
 		System.out.println("+------ Menu ------+-- Qty --+-- Price --+");
-		
-//		for(int i = 0; i < quantMenu.length; i++){
-//		if(quantMenu[i]>0){
-//			System.out.printf("| %s \t\t| %4d \t| %6d %4s\n", menu[i], quantMenu[i], priceMenu[i], "|");
-//		}
-//		}
-		
 		if(quantMenu[0]>0){
 			System.out.printf("| %s %12s %4d %4s %6d %4s\n", menu[0], "|", quantMenu[0], "|", priceMenu[0], "|");
 		}
