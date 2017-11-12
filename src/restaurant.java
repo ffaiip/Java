@@ -1,9 +1,7 @@
-package code;
+ package code;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-
-@author Kavinthip
 
 public class restaurant {
 	
@@ -15,6 +13,9 @@ public class restaurant {
 	static double pricePizza, priceChicken, priceCoke, totalPrice = 0;
 	static int cash = 0;
 	
+
+	static double[] priceMenu = {pricePizza, priceChicken, priceCoke};
+	static double[] price = {250, 120, 45};
 	static String[] menuFunction = { "Total", "Exit"};
 	static String[] letter = { "t", "q"};
 	
@@ -52,24 +53,24 @@ public class restaurant {
 		return sc.nextInt();
 	}
 	
-	static void printTable(double totalPrice2) {
+	static void printTable() {
 		System.out.println("|====== Menu ======|== Qty ==|== Price ==|");
 
-		for (int i = 0; i < quantMenu.length; i++) {
-			if (quantMenu[i] > 0) {
-				System.out.printf("| %-16s | %4d %4s %6d %4s\n", menu[i], quantMenu[i], "|", priceMenu[i], "|");
+		for (int i = 0; i < Menu.length; i++) {
+			if (Menu[i].getQuantity()*Menu[i].getPrice() > 0) {
+				System.out.printf("| %-16s | %4d %4s %6d %4s\n", Menu[i].getName(), Menu[i].getQuantity(), "|", Menu[i].getQuantity()*Menu[i].getPrice(), "|");
 			}
 		}
 
 		System.out.println("|==================|=========|===========|");
-		System.out.printf("| Total %22s %6d %4s\n", "|", totalPrice2, "|");
+		System.out.printf("| Total %22s %6d %4s\n", "|", total(), "|");
 		System.out.println("|==================|=========|===========|");
 	}
 	
-	static double printChange(double totalPrice2, int cash) {
+	static double printChange(double total, int cash) {
 		int[] notes = { 1000, 500, 100, 50, 20 };
 		int[] coins = { 10, 5, 2, 1 };
-		double change = cash - totalPrice2;
+		double change = cash - total;
 		for (int i = 0; i < notes.length; i++) {
 			if (change >= notes[i]) {
 				System.out.printf("%d notes: %.0f\n", notes[i], Math.ceil(change / notes[i]));
@@ -93,50 +94,35 @@ public class restaurant {
 		return total;
 	}
 	
+
 	public static void main(String[] args) {
 	
 		printMenu();
 		
 		while (true) {
-			String choice = readString("\nEnter you choice : ");
-			if (choice.equals("q")) {
-				System.out.printf("Total : %d\n", totalPrice);
+			String choiceStr = readString("\nEnter you choice : ");
+			int choice = Integer.parseInt(choiceStr);
+			double total = total();
+			if (choiceStr.equals("q")) {
+				System.out.printf("Total : %d\n", total);
 				System.out.print("Cash : ");
 				cash = sc.nextInt();
-				System.out.printf("Change : %d\n", cash - totalPrice);
-				printChange(totalPrice, cash);
+				System.out.printf("Change : %d\n", cash - total);
+				printChange(total, cash);
 				System.out.print("===== Thank you =====");
 				break;
 			}
-			if (choice.equals("t")) {
-				
-				printTable(totalPrice);
+			if (choiceStr.equals("t")) {
+
+				printTable();
 
 			} else {
 				String quantityStr = readString("Enter Quantity : ");
 				int quantity = Integer.parseInt(quantityStr);
-
-				switch (choice) {
-				case "1":
-					quantMenu[0] += quantity;
-					priceMenu[0] += price[0] * quantity;
-					totalPrice += price[0] * quantity;
-					break;
-				case "2":
-					quantMenu[1] += quantity;
-					priceMenu[1] += price[1] * quantity;
-					totalPrice += price[1] * quantity;
-					break;
-				case "3":
-					quantMenu[2] += quantity;
-					priceMenu[2] += price[2] * quantity;
-					totalPrice += price[2] * quantity;
-					break;
-				default:
-					System.out.println("invalid");
-				}
+				Menu[choice - 1].addQuantity(quantity);
 
 			}
+
 		}
 	}
 
