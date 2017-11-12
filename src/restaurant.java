@@ -15,10 +15,6 @@ public class restaurant {
 	static double pricePizza, priceChicken, priceCoke, totalPrice = 0;
 	static int cash = 0;
 	
-	static String[] menu = {"Pizza", "Chicken", "Coke"};
-	static int[] quantMenu = {pizza, chicken, coke};
-	static double[] priceMenu = {pricePizza, priceChicken, priceCoke};
-	static double[] price = {250, 120, 45};
 	static String[] menuFunction = { "Total", "Exit"};
 	static String[] letter = { "t", "q"};
 	
