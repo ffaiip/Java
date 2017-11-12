@@ -17,7 +17,7 @@ public class restaurantArray {
 	static void printMenu(String[] menu, int[] price){
 		System.out.println("--------- Welcome to SKE Restaurant ---------");
 		for(int i = 0; i<menu.length; i++){
-			System.out.printf("%d.) %s \t%d \t%2s\n",i+1 ,menu[i], price[i], "Bath.");
+			System.out.printf("%d.) %-10s %d \t%2s\n",i+1 ,menu[i], price[i], "Bath.");
 		}
 		System.out.println("\n[t] Total");
 		System.out.println("[q] Exit");
@@ -35,16 +35,13 @@ public class restaurantArray {
 	
 	static void printTable(int totalPrice){
 		System.out.println("+------ Menu ------+-- Qty --+-- Price --+");
-		if(quantMenu[0]>0){
-			System.out.printf("| %s %12s %4d %4s %6d %4s\n", menu[0], "|", quantMenu[0], "|", priceMenu[0], "|");
+		
+		for (int i = 0; i < quantMenu.length; i++) {
+			if (quantMenu[i] > 0) {
+				System.out.printf("| %-16s | %4d %4s %6d %4s\n", menu[i], quantMenu[i], "|", priceMenu[i], "|");
+			}
 		}
-		if(quantMenu[1]>0){
-			System.out.printf("| %s %10s %4d %4s %6d %4s\n", menu[1], "|", quantMenu[1], "|", priceMenu[1], "|");
-			
-		}
-		if(quantMenu[2]>0){
-			System.out.printf("| %s %13s %4d %4s %6d %4s\n", menu[2], "|", quantMenu[2], "|", priceMenu[2], "|");
-		}
+		
 		System.out.println("+------------------+---------+-----------+");
 		System.out.printf("| Total %22s %6d %4s\n", "|", totalPrice, "|");
 		System.out.println("+------------------+---------+-----------+");
@@ -90,6 +87,7 @@ public class restaurantArray {
 			} else {
 				String quantityStr = readString("Enter Quantity : ");
 				int quantity = Integer.parseInt(quantityStr);
+				
 				switch(choice){
 				case "1" :
 					quantMenu[0] += quantity;
