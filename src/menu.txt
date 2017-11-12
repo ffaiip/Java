@@ -1,3 +1,4 @@
 Pizza; 250;
 Chicken; 300;
 Coke; 20;
+Salad; 150;
