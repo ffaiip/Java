@@ -1,4 +1,4 @@
- package code;
+package code;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -8,12 +8,8 @@ public class restaurant {
 	static RestaurantManager readM = new RestaurantManager();
     static Scanner sc = new Scanner(System.in);
     static Food[] Menu =  new Food[readMenu(readM.readFile()).size()];
-
-	static double totalPrice = 0;
-	static int cash = 0;
-
-	static String[] menuFunction = { "Total", "Exit"};
-	static String[] letter = { "t", "q"};
+    
+	static double total = 0, cash = 0;
 	
 	public static ArrayList<Food> readMenu(String menu){
 		Scanner sc = new Scanner(menu);
@@ -63,7 +59,7 @@ public class restaurant {
 		System.out.println("|==================|=========|===========|");
 	}
 	
-	static double printChange(double total, int cash) {
+	static double printChange(double total, double cash) {
 		int[] notes = { 1000, 500, 100, 50, 20 };
 		int[] coins = { 10, 5, 2, 1 };
 		double change = cash - total;
@@ -83,7 +79,7 @@ public class restaurant {
 	}
 	
 	public static double total(){
-		double total = 0;
+		total = 0;
 		for(int i =0;i<Menu.length;i++){
 			total = total+Menu[i].getQuantity()*Menu[i].getPrice();
 		}
@@ -92,24 +88,24 @@ public class restaurant {
 	
 
 	public static void main(String[] args) {
-	
+	    
+		Menu = readMenu(readM.readFile()).toArray(Menu);
 		printMenu();
 		
 		while (true) {
 			String choiceStr = readString("\nEnter you choice : ");
 			int choice = Integer.parseInt(choiceStr);
-			double total = total();
+			total = total();
 			if (choiceStr.equals("q")) {
 				System.out.printf("Total : %d\n", total);
 				System.out.print("Cash : ");
-				cash = sc.nextInt();
+				cash = sc.nextDouble();
 				System.out.printf("Change : %d\n", cash - total);
 				printChange(total, cash);
 				System.out.print("===== Thank you =====");
 				break;
 			}
 			if (choiceStr.equals("t")) {
-
 				printTable();
 
 			} else {
