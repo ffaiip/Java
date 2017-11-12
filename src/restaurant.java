@@ -5,15 +5,27 @@ public class restaurant {
 	static int pricePizza = 0, priceChicken = 0, priceCoke = 0, totalPrice = 0;
 	static int cash = 0;
 	
+	static String[] menu = {"Pizza", "Chicken", "Coke"};
+	static int[] quantMenu = {pizza, chicken, coke};
+	static int[] priceMenu = {pricePizza, priceChicken, priceCoke};
+	static int[] price = {250, 120, 45};
+	static String[] menuFunction = { "Total", "Exit"};
+	static String[] letter = { "t", "q"};
+	
 	static Scanner sc = new Scanner(System.in);
 	
-	static void printWelcome(){
+	static void printMenu(String[] menu, int[] price){
 		System.out.println("--------- Welcome to SKE Restaurant ---------");
-		System.out.printf("1.) Pizza %20d %2s\n", 250, "Baht.");
-		System.out.printf("2.) Chickens %17d %2s\n", 120, "Baht.");
-		System.out.printf("3.) Coke %21d %2s\n", 45, "Baht.");
-		System.out.println("4.) Total");
-		System.out.println("5.) Exit");
+		for(int i = 0; i<menu.length; i++){
+			System.out.printf("%d.) %-10s %d \t%2s\n",i+1 ,menu[i], price[i], "Bath.");
+		}
+		System.out.println("\n[t] Total");
+		System.out.println("[q] Exit");
+	}
+	
+	static String readString(String prompt){
+		System.out.print(prompt);
+		return sc.next();
 	}
 	
 	static int readInt(String prompt){
@@ -21,70 +33,46 @@ public class restaurant {
 		return sc.nextInt();
 	}
 	
-	static void printTable(int pizza, int pricePizza, int chicken, int priceChicken, int coke, int priceCoke, int totalPrice){
+	static void printTable(int totalPrice){
 		System.out.println("+------ Menu ------+-- Qty --+-- Price --+");
-		if(pizza>0){
-			System.out.printf("| Pizza %12s %4d %4s %6d %4s\n", "|", pizza, "|", pricePizza, "|");
+		
+		for (int i = 0; i < quantMenu.length; i++) {
+			if (quantMenu[i] > 0) {
+				System.out.printf("| %-16s | %4d %4s %6d %4s\n", menu[i], quantMenu[i], "|", priceMenu[i], "|");
+			}
 		}
-		if(chicken>0){
-			System.out.printf("| Chicken %10s %4d %4s %6d %4s\n", "|", chicken, "|", priceChicken, "|");
-			
-		}
-		if(coke>0){
-			System.out.printf("| Coke %13s %4d %4s %6d %4s\n", "|", coke, "|", priceCoke, "|");
-		}
+		
 		System.out.println("+------------------+---------+-----------+");
 		System.out.printf("| Total %22s %6d %4s\n", "|", totalPrice, "|");
 		System.out.println("+------------------+---------+-----------+");
 	}
 	
-	static int printChange(int totalPrice,int cash){
-		int change = cash-totalPrice;
-		if(change>=1000){
-			System.out.printf("1000 notes: %.0f\n", Math.ceil(change/1000));
-			change = change%1000;
+	static int printChange(int totalPrice, int cash) {
+		int[] notes = { 1000, 500, 100, 50, 20 };
+		int[] coins = { 10, 5, 2, 1 };
+		int change = cash - totalPrice;
+		for (int i = 0; i < notes.length; i++) {
+			if (change >= notes[i]) {
+				System.out.printf("%d notes: %.0f\n", notes[i], Math.ceil(change / notes[i]));
+				change = change % notes[i];
+			}
 		}
-		if(change>=500){
-			System.out.printf("500 notes: %.0f\n", Math.ceil(change/500));
-			change = change%500;
+		for (int f = 0; f < coins.length; f++) {
+			if (change >= coins[f]) {
+				System.out.printf("%d coins: %.0f\n", coins[f], Math.ceil(change / coins[f]));
+				change = change % coins[f];
+			}
 		}
-		if(change>=100){
-			System.out.printf("100 notes: %.0f\n", Math.ceil(change/100));
-			change = change%100;
-		}
-		if(change>=50){
-			System.out.printf("50 notes: %.0f\n", Math.ceil(change/50));
-			change = change%50;
-		}
-		if(change>=20){
-			System.out.printf("20 notes: %.0f\n", Math.ceil(change/20));
-			change = change%20;
-		}
-		if(change>=10){
-			System.out.printf("10 coins: %.0f\n", Math.ceil(change/10));
-			change = change%10;
-		}
-		if(change>=5){
-			 System.out.printf("5 coins: %.0f\n", Math.ceil(change/5));
-			 change = change%5;
-		 }
-		 if(change>=2){
-			 System.out.printf("2 coins: %.0f\n", Math.ceil(change/2));
-			 change = change%2;
-		 }
-		 if(change>=1){
-			 System.out.printf("1 coins: %.0f\n", Math.ceil(change/1));
-		 }
-		 return change;
+		return change;
 	}
-	
 
 	public static void main(String[] args) {
 	
-		printWelcome();
+		printMenu(menu, price);
+		
 		while (true) {
-			int choice = readInt("\nEnter you choice : ");
-			if (choice == 5) {
+			String choice = readString("\nEnter you choice : ");
+			if (choice.equals("q")) {
 				System.out.printf("Total : %d\n",totalPrice);
 				System.out.print("Cash : ");
 				cash = sc.nextInt();
@@ -93,27 +81,31 @@ public class restaurant {
 				System.out.print("===== Thank you =====");
 				break;
 			}
-			if (choice == 4) {
-				printTable(pizza, pricePizza, chicken, priceChicken, coke, priceCoke, totalPrice);
+			if (choice.equals("t")) {
+				printTable(totalPrice);
 
 			} else {
-				int quantity = readInt("Enter Quantity : ");
+				String quantityStr = readString("Enter Quantity : ");
+				int quantity = Integer.parseInt(quantityStr);
+				
 				switch(choice){
-				case 1 :
-					pizza += quantity;
-					pricePizza += 250*quantity;
-					totalPrice += 250*quantity;
+				case "1" :
+					quantMenu[0] += quantity;
+					priceMenu[0] += price[0]*quantity;
+					totalPrice += price[0]*quantity;
 					break;
-				case 2 :
-					chicken += quantity;
-					priceChicken += 120*quantity;
-					totalPrice += 120*quantity;
+				case "2" :
+					quantMenu[1] += quantity;
+					priceMenu[1] += price[1]*quantity;
+					totalPrice += price[1]*quantity;
 					break;
-				case 3 :
-					coke += quantity;
-					priceCoke += 45*quantity;
-					totalPrice += 45*quantity;
+				case "3" :
+					quantMenu[2] += quantity;
+					priceMenu[2] += price[2]*quantity;
+					totalPrice += price[2]*quantity;
 					break;
+				default :
+					System.out.println("invalid");
 				}
 				
 			}
