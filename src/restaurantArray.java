@@ -1,5 +1,7 @@
 import java.util.Scanner;
 
+@author Kavinthip
+
 public class restaurantArray {
 	static int pizza = 0, chicken = 0, coke = 0;
 	static int pricePizza = 0, priceChicken = 0, priceCoke = 0, totalPrice = 0;
