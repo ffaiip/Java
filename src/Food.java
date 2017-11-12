@@ -1,5 +1,7 @@
 package code;
 
+ @author Kavinthip
+
 public class Food {
 		String name;
 		double price;
