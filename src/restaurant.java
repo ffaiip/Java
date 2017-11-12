@@ -3,6 +3,8 @@ package code;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+@author Kavinthip
+
 public class restaurant {
 	
 	static RestaurantManager readM = new RestaurantManager();
