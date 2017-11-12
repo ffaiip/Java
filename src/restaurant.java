@@ -8,14 +8,10 @@ public class restaurant {
 	static RestaurantManager readM = new RestaurantManager();
     static Scanner sc = new Scanner(System.in);
     static Food[] Menu =  new Food[readMenu(readM.readFile()).size()];
-    
-	static int pizza, chicken, coke;
-	static double pricePizza, priceChicken, priceCoke, totalPrice = 0;
-	static int cash = 0;
-	
 
-	static double[] priceMenu = {pricePizza, priceChicken, priceCoke};
-	static double[] price = {250, 120, 45};
+	static double totalPrice = 0;
+	static int cash = 0;
+
 	static String[] menuFunction = { "Total", "Exit"};
 	static String[] letter = { "t", "q"};
 	
