@@ -3,6 +3,7 @@ package code;
 import java.io.InputStream;
 import java.util.Scanner;
 
+@author Kavinthip
 
 public class RestaurantManager {
 
