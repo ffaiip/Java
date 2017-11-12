@@ -97,15 +97,6 @@ public class restaurant {
 		return total;
 	}
 	
-	public static void printTotal(){
-		for(int i =0;i<Menu.length;i++){
-			if (Menu[i].getQuantity()*Menu[i].getPrice() > 0) {
-				System.out.printf("| %-14s   |   %5d |  %5d    |\n",Menu[i].getName(),Menu[i].getQuantity(),Menu[i].getQuantity()*Menu[i].getPrice());
-			}
-		}
-		
-	}
-
 	public static void main(String[] args) {
 	
 		printMenu();
