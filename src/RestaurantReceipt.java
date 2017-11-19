@@ -1,6 +1,10 @@
 package code;
 
-public class RestaurantReceipt{
+/*
+@author Kavinthip
+*/
+
+public class RestaurantReceipt {
 	private String[] receipt;
 	private String comment;
 	private String restaurantName;

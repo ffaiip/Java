@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+/*
+@author Kavinthip
+*/
+
 public class restaurant {
 	public static RestaurantManager restaurant;
 
@@ -34,7 +38,7 @@ public class restaurant {
 		Scanner getFileName = new Scanner(System.in);
 		System.out.print("Please input your menufile : ");
 		String fileName = getFileName.nextLine();
-		return String.format("data/%s.txt", fileName);
+		return String.format("/data/%s.txt", fileName);
 	}
 
 	public static void makeNewRestaurant() {
@@ -94,14 +98,14 @@ public class restaurant {
 		}
 	}
 
-	public static double lap(double value, int places) {
-		if (places < 0)
+	public static double lap(double value, int p) {
+		if (p < 0)
 			throw new IllegalArgumentException();
 
-		long factor = (long) Math.pow(10, places);
+		long factor = (long) Math.pow(10, p);
 		value = value * factor;
-		long tmp = Math.round(value);
-		return (double) tmp / factor;
+		long val = Math.round(value);
+		return (double) val / factor;
 	}
 
 	public static void makeReceiptForm(double total, double[] totalPrice, int[] totalQuantity, double cash) {
@@ -173,7 +177,7 @@ public class restaurant {
 	}
 
 	public static void makeOrder(String restrName,double total,double[] totalPrice,int[] totalQuantity) {
-		Scanner getComment = new Scanner(System.in);
+		Scanner scanSuggest = new Scanner(System.in);
 		String choice = "";
 
 		totalQuantity = new int[priceDoub.length];
@@ -189,9 +193,9 @@ public class restaurant {
 			}
 		} while (!choice.equalsIgnoreCase("E"));
 
-		System.out.print("Your comments/suggestion : ");
-		String comment = getComment.nextLine();
-		RestaurantReceipt receipt = new RestaurantReceipt(restrName, rcpt, comment);
+		System.out.print("Your suggestion : ");
+		String suggestion = scanSuggest.nextLine();
+		RestaurantReceipt receipt = new RestaurantReceipt(restrName, rcpt, suggestion);
 		allReceipt.add(receipt);
 		System.out.println("===== Thank you =====");
 
@@ -199,11 +203,11 @@ public class restaurant {
 
 	public static void menuSuggestion(String restName) {
 		System.out.printf("\n<<+++++++Welcome to %s Restaurant+++++++>>\n", restName);
-		System.out.println("[ O ] - Order food");
+		System.out.println("[O]rder");
 		for (int i = 0, j = 1; i < menuArr.length; i++, j++) {
 			System.out.printf("\t%d.) %-25s%.0f\t%3s.\n", j, menuArr[i], priceDoub[i], current);
 		}
-		System.out.print("[ T ] - Check your total price\n[ E ] - Exit (Stop choosing any choice in this bill)\n");
+		System.out.print("[T]otal price\n[ E ] - Exit\n");
 	}
 
 	public static void saveAllReceiptInText() {

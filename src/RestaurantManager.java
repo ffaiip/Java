@@ -4,6 +4,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/*
+@author Kavinthip
+*/
+
 public class RestaurantManager {
 
 	private ArrayList<String> menuLst = new ArrayList<String>();
