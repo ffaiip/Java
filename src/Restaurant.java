@@ -38,7 +38,7 @@ public class Restaurant {
 		Scanner getFileName = new Scanner(System.in);
 		System.out.print("Your file : ");
 		String fileName = getFileName.nextLine();
-		return String.format("/data/%s.txt", fileName);
+		return String.format("data/%s.txt", fileName);
 	}
 
 	public static void makeNewRestaurant() {
