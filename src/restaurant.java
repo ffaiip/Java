@@ -1,62 +1,144 @@
 package code;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class restaurant {
-	
-	static RestaurantManager readM = new RestaurantManager();
-    static Scanner sc = new Scanner(System.in);
-    static Food[] Menu =  new Food[readMenu(readM.readFile()).size()];
-    
-	static double total = 0, cash = 0;
-	
-	public static ArrayList<Food> readMenu(String menu){
-		Scanner sc = new Scanner(menu);
-		String nameFood = " ";
-		int priceFood = 0;
-		ArrayList<Food> Menu = new ArrayList<Food>();
-		
-		while(sc.hasNextLine()){
-			String line = sc.nextLine();
-			nameFood = line.split(";")[0];
-			priceFood = Integer.parseInt(line.split(";")[1].trim());
-			Menu.add(new Food(nameFood,priceFood));
-		}
-		return Menu;
-	}
-	
-	static void printMenu() {
-		System.out.println("-<-<-<-<- Welcome to SKE Restaurant ->->->->-");
-		for (int i = 0; i < Menu.length; i++) {
-			System.out.printf("%d.) %-10s %d \t%2s\n", i + 1, Menu[i].getName(), Menu[i].getPrice(), "Bath.");
-		}
-		System.out.println("\n[t] Total");
-		System.out.println("[q] Exit");
-	}
-	
-	static String readString(String prompt){
-		System.out.print(prompt);
-		return sc.next();
-	}
-	
-	static int readInt(String prompt){
-		System.out.print(prompt);
-		return sc.nextInt();
-	}
-	
-	static void printTable() {
-		System.out.println("|====== Menu ======|== Qty ==|== Price ==|");
+	public static RestaurantManager restaurant;
 
-		for (int i = 0; i < Menu.length; i++) {
-			if (Menu[i].getQuantity()*Menu[i].getPrice() > 0) {
-				System.out.printf("| %-16s | %4d %4s %6d %4s\n", Menu[i].getName(), Menu[i].getQuantity(), "|", Menu[i].getQuantity()*Menu[i].getPrice(), "|");
+	public static String[] menuArr;
+	public static String[] priceStr;
+	public static double[] priceDoub;
+	public static String current;
+	double cash = 0;
+
+	public static String[] rcpt;
+	public static ArrayList<Object> allReceipt;
+
+	static String outputFile = "src/data/AllReceipt.txt";
+	static Scanner sc = new Scanner(System.in);
+
+	public static String askRestaurantName() {
+		Scanner getRestrName = new Scanner(System.in);
+		System.out.print("Name of your restaurant : ");
+		return getRestrName.nextLine();
+	}
+
+	public static String askMenuFile() {
+		Scanner getFileName = new Scanner(System.in);
+		System.out.print("Please input your menufile : ");
+		String fileName = getFileName.nextLine();
+		return String.format("data/%s.txt", fileName);
+	}
+
+	public static void makeNewRestaurant() {
+		String fileLocate = askMenuFile();
+		restaurant = new RestaurantManager(fileLocate);
+
+		menuArr = new String[restaurant.getMenuList().size()];
+		menuArr = restaurant.getMenuList().toArray(menuArr);
+
+		priceStr = new String[restaurant.getPriceList().size()];
+		priceDoub = getDouble(restaurant.getPriceList().toArray(priceStr));
+	}
+	
+	public static double[] getDouble(String[] price) {
+		double[] newPrice = new double[price.length];
+		for (int i = 0; i < price.length; i++) {
+			newPrice[i] = Integer.parseInt(price[i]);
+		}
+		return newPrice;
+	}
+
+	public static String getChoice() {
+		Scanner getChoice = new Scanner(System.in);
+		System.out.print("Enter your Choice : ");
+		return getChoice.nextLine();
+	}
+
+	public static int getMenuChoice() {
+		System.out.print("Enter the menu number : ");
+		int choice = sc.nextInt();
+		return choice;
+	}
+
+	public static int getQuantity() {
+		System.out.print("Enter Quantity : ");
+		int quantity = sc.nextInt();
+		return quantity;
+	}
+
+	public static double getTotal(int[] totalQuantity) {
+		double total = 0.0;
+		for (int i = 0; i < totalQuantity.length; i++) {
+			total += totalQuantity[i] * priceDoub[i];
+		}
+		return total;
+	}
+
+	public static void selectMenu(double total,double[] totalPrice,int[] totalQuantity) {
+		int quantity = 0;
+		int choice = getMenuChoice();
+		if ((choice >= 1) && (choice <= menuArr.length)) {
+			quantity = getQuantity();
+			System.out.println();
+			totalQuantity[choice - 1] += quantity;
+			totalPrice[choice - 1] += priceDoub[choice - 1] * quantity;
+			total = getTotal(totalQuantity);
+		}
+	}
+
+	public static double lap(double value, int places) {
+		if (places < 0)
+			throw new IllegalArgumentException();
+
+		long factor = (long) Math.pow(10, places);
+		value = value * factor;
+		long tmp = Math.round(value);
+		return (double) tmp / factor;
+	}
+
+	public static void makeReceiptForm(double total, double[] totalPrice, int[] totalQuantity, double cash) {
+		int n = 1;
+		String space = "|\t";
+		rcpt[0] = "\n|======== Menu =========|==== Qty ======|==== Price ====|\n";
+		for (int i = 0; i < totalPrice.length; i++) {
+			totalPrice[i] = lap(totalPrice[i], 2);
+			
+			if(menuArr[i].length() <= 6) space = "\t\t\t|\t";
+			else if(menuArr[i].length() <= 12) space = "\t\t|\t";
+			else if(menuArr[i].length() <= 21) space = "\t|\t";
+			
+			rcpt[i + 1] = "| " + menuArr[i] + space + totalQuantity[i] + "\t|" + "\t" + totalPrice[i]
+					+ "\t|\n";
+			n++;
+		}
+		total = lap(total, 2);
+		rcpt[n] = "|=======================================================|\n";
+		rcpt[n + 1] = "| Total\t\t\t|" + "\t\t\t" + total + "\t|\n";
+		rcpt[n + 2] = "|=======================================================|\n";
+		rcpt[n + 3] = "\nCash : \n";
+		cash = sc.nextInt();
+		rcpt[n + 4] = "Here is your change : " + (cash-total) + printChange(total, cash) + "\n\n";
+
+	}
+
+	public static void printReceipt(int[] totalQuantity) {
+		for (int i = 0; i < rcpt.length; i++) {
+			if ((i >= 1) && (i <= menuArr.length)) {
+				if (totalQuantity[i - 1] != 0) {
+					System.out.print(rcpt[i]);
+				}
+			} else {
+				System.out.print(rcpt[i]);
 			}
 		}
-
-		System.out.println("|==================|=========|===========|");
-		System.out.printf("| Total %22s %6d %4s\n", "|", total(), "|");
-		System.out.println("|==================|=========|===========|");
 	}
 	
 	static double printChange(double total, double cash) {
@@ -77,45 +159,165 @@ public class restaurant {
 		}
 		return change;
 	}
-	
-	public static double total(){
-		total = 0;
-		for(int i =0;i<Menu.length;i++){
-			total = total+Menu[i].getQuantity()*Menu[i].getPrice();
-		}
-		return total;
-	}
-	
 
-	public static void main(String[] args) {
-	    
-		Menu = readMenu(readM.readFile()).toArray(Menu);
-		printMenu();
-		
-		while (true) {
-			String choiceStr = readString("\nEnter you choice : ");
-			int choice = Integer.parseInt(choiceStr);
-			total = total();
-			if (choiceStr.equals("q")) {
-				System.out.printf("Total : %d\n", total);
-				System.out.print("Cash : ");
-				cash = sc.nextDouble();
-				System.out.printf("Change : %d\n", cash - total);
-				printChange(total, cash);
-				System.out.print("===== Thank you =====");
+	public static void selectChoice(String choice, double total, double[] totalPrice, int[] totalQuantity, double cash) {
+		if (choice.equalsIgnoreCase("O")) {
+			selectMenu(total,totalPrice,totalQuantity);
+		} else if (choice.equalsIgnoreCase("T")) {
+			makeReceiptForm(total, totalPrice, totalQuantity, cash);
+			printReceipt(totalQuantity);
+		} else if (choice.equalsIgnoreCase("E")) {
+			makeReceiptForm(total, totalPrice, totalQuantity, cash);
+			printReceipt(totalQuantity);
+		} 
+	}
+
+	public static void makeOrder(String restrName,double total,double[] totalPrice,int[] totalQuantity) {
+		Scanner getComment = new Scanner(System.in);
+		String choice = "";
+
+		totalQuantity = new int[priceDoub.length];
+		totalPrice = new double[priceDoub.length];
+		rcpt = new String[5 + menuArr.length];
+
+		do {
+			choice = getChoice();
+			selectChoice(choice,total,totalPrice,totalQuantity, total);
+			total = getTotal(totalQuantity);
+			if ((choice.equalsIgnoreCase("Bill"))) {
 				break;
 			}
-			if (choiceStr.equals("t")) {
-				printTable();
+		} while (!choice.equalsIgnoreCase("E"));
 
-			} else {
-				String quantityStr = readString("Enter Quantity : ");
-				int quantity = Integer.parseInt(quantityStr);
-				Menu[choice - 1].addQuantity(quantity);
+		System.out.print("Your comments/suggestion : ");
+		String comment = getComment.nextLine();
+		RestaurantReceipt receipt = new RestaurantReceipt(restrName, rcpt, comment);
+		allReceipt.add(receipt);
+		System.out.println("===== Thank you =====");
 
-			}
+	}
 
+	public static void menuSuggestion(String restName) {
+		System.out.printf("\n<<+++++++Welcome to %s Restaurant+++++++>>\n", restName);
+		System.out.println("[ O ] - Order food");
+		for (int i = 0, j = 1; i < menuArr.length; i++, j++) {
+			System.out.printf("\t%d.) %-25s%.0f\t%3s.\n", j, menuArr[i], priceDoub[i], current);
 		}
+		System.out.print("[ T ] - Check your total price\n[ E ] - Exit (Stop choosing any choice in this bill)\n");
+	}
+
+	public static void saveAllReceiptInText() {
+		OutputStream out = null;
+		try {
+			out = new FileOutputStream(outputFile);
+		} catch (FileNotFoundException e) {
+			System.out.println("Couldn't open output file " + outputFile);
+		}
+		printReceipt(out);
+	}
+
+	public static void printReceipt(OutputStream out) {
+		PrintStream printOut = new PrintStream(out);
+		for (int i = 0; i < allReceipt.size(); i++) {
+			Object myReceiptObj = allReceipt.get(i);
+			String myRestName = ((RestaurantReceipt) myReceiptObj).getRestaurantName();;
+			String[] myReceipt = ((RestaurantReceipt) myReceiptObj).getReciept();
+			String myComment = ((RestaurantReceipt) myReceiptObj).getComment();
+			
+			for (int j = 0; j < myReceipt.length; j++) {
+				printOut.print(myReceipt[j]);
+			}
+			printOut.println("Comment/Suggestion : " + myComment);
+			printOut.println("=======================================================");
+		}
+	}
+
+	public static void checkIn(String choiceManage) {
+		Scanner scanChoiceManage = new Scanner(System.in);
+		while (menuArr.length == 0) {
+			System.out.println("This is an empty file please press [N] to create your restaurant again");
+			System.out.print("[N]ew restaurant or [E]xit : ");
+			choiceManage = scanChoiceManage.nextLine();
+			System.out.println();
+			if (choiceManage.equalsIgnoreCase("N")) {
+				makeNewRestaurant();
+			} else if (choiceManage.equalsIgnoreCase("E"))
+				break;
+		}
+	}
+
+	public static void editMenu() {
+		Scanner getMenuName = new Scanner(System.in);
+		ArrayList<String> newMenu = restaurant.getMenuList();
+		ArrayList<String> newPrice = restaurant.getPriceList();
+
+		System.out.print("[A]dd menu or [D]elete menu : ");
+		String edit = sc.next();
+		if (edit.equalsIgnoreCase("A")) {
+			System.out.print("Menu name : ");
+			String newMenuName = getMenuName.nextLine();
+			if (!newMenu.contains(newMenuName)) {
+				newMenu.add(newMenuName);
+				System.out.print("Menu Price : ");
+				String newMenuPrice = sc.next();
+				newPrice.add(newMenuPrice);
+			} else if (newMenu.contains(newMenuName)) {
+				System.out.print("This menu is added already\n");
+			}
+		} else if (edit.equalsIgnoreCase("D")) {
+			for (int i = 0, j = 1; i < menuArr.length; i++, j++) {
+				System.out.printf("\t%d.) %-25s%.0f\t%3s.\n", j, menuArr[i], priceDoub[i], current);
+			}
+			System.out.print("Choose the number of menu to delete menu : ");
+			int menuChoice = sc.nextInt();
+			newMenu.remove(menuChoice - 1);
+			newPrice.remove(menuChoice - 1);
+		}
+		restaurant.setMenuList(newMenu);
+		menuArr = new String[restaurant.getMenuList().size()];
+		menuArr = restaurant.getMenuList().toArray(menuArr);
+
+		restaurant.setPriceList(newPrice);
+		priceStr = new String[restaurant.getPriceList().size()];
+		priceDoub = getDouble(restaurant.getPriceList().toArray(priceStr));
+	}
+
+	public static void main(String[] args) {
+		Scanner getCharac = new Scanner(System.in);
+		String charac = "" , choiceManage = "";
+		double total = 0.0;
+		int[] totalQuantity = null;
+		double[] totalPrice = null;
+		allReceipt = new ArrayList<Object>();
+		do {
+			makeNewRestaurant();
+			if (menuArr.length == 0) {
+				checkIn(choiceManage);
+			}
+			if (choiceManage.equalsIgnoreCase("E"))
+				break;
+
+			String restrName = askRestaurantName();
+			System.out.print("Please input current: ");
+			current = sc.next();
+
+			do {
+				menuSuggestion(restrName);
+				makeOrder(restrName,total,totalPrice,totalQuantity);
+				do {
+					System.out.print("\n[M]ake new order [N]ew restaurant [E]dit menu or [Q]uit : ");
+					charac = getCharac.nextLine();
+					System.out.println();
+					if (charac.equalsIgnoreCase("E")) {
+						editMenu();
+					} else if (charac.equalsIgnoreCase("Q")) {
+						saveAllReceiptInText();
+						break;
+					}
+				} while (charac.equalsIgnoreCase("E"));
+			} while (charac.equalsIgnoreCase("M"));
+		} while (charac.equalsIgnoreCase("N"));
+
 	}
 
 }
